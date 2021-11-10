@@ -6,7 +6,6 @@ import { CardBody, Button, Text } from 'cofetch-uikit'
 import { GreyCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
-import RoverInputPanel from 'components/RoverInputPanel'
 import CardNav from 'components/CardNav'
 import { AutoRow } from 'components/Row'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
@@ -79,7 +78,6 @@ const Deposit = () => {
   const [roverBalance, setRoverBalance] = useState('')
   const [CotToBnb, setCotToBnb] = useState('')
   const [CotToUsd, setCotToUsd] = useState('')
-  const [useRover, setUserRover] = useState(false)
   const roverTokenContract = useTokenContract(UNDERLYING_TOKEN)
   const ClaimableStakeContract = useStakeContract(ClaimableAddress)
 
@@ -251,45 +249,6 @@ const Deposit = () => {
     ]
   )
 
-  const handleTypeInput2 = useCallback(
-    async (value: string) => {
-      if (DexFormula && Router) {
-        // const display = web3.utils.toWei(value)
-        const addressTemp = await Router.WETH()
-        if (tryParseAmount(value, inputCurrency ?? undefined)) {
-          onUserInput2(Field.INPUT2, value)
-          const bnbAmount = await DexFormula.routerRatio(UNDERLYING_TOKEN, addressTemp, web3.utils.toWei(value))
-          onUserInput(Field.INPUT, parseFloat(web3.utils.fromWei(bnbAmount.toString())).toFixed(6))
-          const poolAmount = await DexFormula.calculatePoolToMint(
-            web3.utils.toWei(value),
-            web3.utils.toWei(bnbAmount.toString()),
-            pair
-          )
-
-          const earned = await (ClaimableStakeContract)?.earnedByShare(
-            poolAmount
-          )
-
-          onChangePoolAmount(poolAmount)
-          onChangeEarnedRewards(parseFloat(web3.utils.fromWei(earned.toString())).toFixed(6))
-        } else {
-          onUserInput2(Field.INPUT2, value)
-          onUserInput(Field.INPUT, '0')
-        }
-      }
-    },
-    [
-      onChangePoolAmount,
-      onChangeEarnedRewards,
-      onUserInput,
-      onUserInput2,
-      DexFormula,
-      Router,
-      web3.utils,
-      inputCurrency,
-      ClaimableStakeContract,
-    ]
-  )
 
   const route = trade?.route
   const userHasSpecifiedInputOutput = Boolean(
@@ -311,7 +270,6 @@ const Deposit = () => {
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
 
   const maxAmountInput: CurrencyAmount | undefined = maxAmountSpend(currencyBalances[Field.INPUT])
-  const maxAmountInput2: string = roverBalance
 
   // mark when a user has submitted an approval, reset onTokenSelection for input field
   useEffect(() => {
@@ -358,12 +316,6 @@ const Deposit = () => {
     }
   }, [maxAmountInput, handleTypeInput])
 
-  const handleMaxInput2 = useCallback(() => {
-    if (maxAmountInput2) {
-      handleTypeInput2(maxAmountInput2)
-      // onUserInput2(Field.INPUT2, maxAmountInput2)
-    }
-  }, [maxAmountInput2, handleTypeInput2])
 
   const handleDeposit = async () => {
     if (account) {
@@ -381,32 +333,6 @@ const Deposit = () => {
     }
   }
 
-  const handleDepositWithRover = async () => {
-    if(approval === ApprovalState.PENDING){
-      alert(`Please wait for ${UNDERLYING_NAME} approve`)
-      return
-    }
-
-    if(approval === ApprovalState.NOT_APPROVED){
-      alert(`Please approve ${UNDERLYING_NAME}`)
-      return
-    }
-
-    if (account) {
-      if (contract != null) {
-        try {
-          const bnbAmount = parseEther(typedValue)
-          const roverAmount = parseEther(typedValue2)
-          const txReceipt = await contract.depositETHAndERC20(roverAmount._hex, { value: bnbAmount._hex })
-          addTransaction(txReceipt)
-        } catch (error) {
-          console.error('Could not deposit', error)
-        }
-      }
-    } else {
-      alert('Please connect to web3')
-    }
-  }
   return (
     <>
       <TokenWarningModal
@@ -447,35 +373,6 @@ const Deposit = () => {
                 id="swap-currency-input"
               />
 
-              <label htmlFor="understand-checkbox" style={{ cursor: 'pointer', userSelect: 'none' }}>
-              <input
-                id="use-underlying-checkbox"
-                type="checkbox"
-                className="use-underlying-checkbox"
-                checked={useRover}
-                onChange={() => setUserRover(!useRover)}
-              />
-              <Text as="span">Use {UNDERLYING_NAME}</Text>
-              </label>
-
-              {useRover
-                ?
-                (
-                <RoverInputPanel
-                  label={TranslateString(76, `${UNDERLYING_NAME} Amount`)}
-                  value={typedValue2}
-                  roverBalance={roverBalance}
-                  showMaxButton
-                  currency={currencies[Field.INPUT2]}
-                  onUserInput={handleTypeInput2}
-                  onMax={handleMaxInput2}
-                  id="swap-currency-input"
-                />
-              )
-              :
-              null
-            }
-
             </AutoColumn>
             <BottomGrouping>
               {!account ? (
@@ -490,7 +387,7 @@ const Deposit = () => {
                 <GreyCard style={{ textAlign: 'center' }}>
                   <Text mb="4px">{TranslateString(1194, 'Insufficient liquidity for this trade.')}</Text>
                 </GreyCard>
-              ) : useRover && showApproveFlow ? (
+              ) : showApproveFlow ? (
                 <Button
                   onClick={approveCallback}
                   disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
@@ -515,7 +412,7 @@ const Deposit = () => {
               <div>
                 <Button
                   onClick={() =>
-                    useRover ? handleDepositWithRover() : handleDeposit()
+                   handleDeposit()
                   }
                   // onClick={() => handleDeposit()}
                   id="deposit-button"
