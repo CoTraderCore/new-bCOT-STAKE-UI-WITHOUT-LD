@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, TokenAmount } from 'pancakes-sdk'
+import { CurrencyAmount, Token, TokenAmount } from 'pancakes-sdk'
 import { ethers } from 'ethers'
 import { BigNumber } from '@ethersproject/bignumber'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -7,7 +7,6 @@ import { GreyCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import CardNav from 'components/CardNav'
-import { AutoRow } from 'components/Row'
 import AdvancedSwapDetailsDropdown from 'components/swap/AdvancedSwapDetailsDropdown'
 import { BottomGrouping, Wrapper } from 'components/swap/styleds'
 import TokenWarningModal from 'components/TokenWarningModal'
@@ -31,7 +30,6 @@ import {
   useSwapState,
 } from 'state/swap/hooks'
 import { maxAmountSpend } from 'utils/maxAmountSpend'
-import Loader from 'components/Loader'
 import useI18n from 'hooks/useI18n'
 import PageHeader from 'components/PageHeader'
 
@@ -55,7 +53,6 @@ import {
 } from '../../constants/address/address'
 
 import '../../App.css'
-import { UNDERLYING_NAME } from '../../constants'
 import pair from '../../config/config'
 
 const Deposit = () => {
@@ -104,24 +101,14 @@ const Deposit = () => {
   }, [])
 
   const { independentField, typedValue, typedValue2, poolAmount: calculatedPoolAmount } = useSwapState()
-  const { v2Trade, currencyBalances, parsedAmount, currencies, inputError, inputErrorDeposit } = useDerivedSwapInfo()
-  const { wrapType, execute: onWrap, inputError: wrapInputError } = useWrapCallback(
+  const { v2Trade, currencyBalances, currencies, inputError, inputErrorDeposit } = useDerivedSwapInfo()
+  const { wrapType } = useWrapCallback(
     currencies[Field.INPUT],
     currencies[Field.OUTPUT],
     typedValue
   )
   const showWrap: boolean = wrapType !== WrapType.NOT_APPLICABLE
   const trade = showWrap ? undefined : v2Trade
-
-  const parsedAmounts = showWrap
-    ? {
-        [Field.INPUT]: parsedAmount,
-        [Field.OUTPUT]: parsedAmount,
-      }
-    : {
-        [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-        [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-      }
 
   const {
     onCurrencySelection,
@@ -249,13 +236,6 @@ const Deposit = () => {
     ]
   )
 
-
-  const route = trade?.route
-  const userHasSpecifiedInputOutput = Boolean(
-    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))
-  )
-  const noRoute = !route
-
   // check whether the user has approved the router on the input token
   const amount = parseFloat(typedValue2) > 0 ? web3.utils.toWei(String(typedValue2)) : '0'
 
@@ -277,13 +257,6 @@ const Deposit = () => {
       setApprovalSubmitted(true)
     }
   }, [approval, approvalSubmitted])
-
-  // show approve flow when: no error on inputs, not approved or pending, or approved in current session
-  // never show if price impact is above threshold in non expert mode
-  const showApproveFlow =
-    (approval === ApprovalState.NOT_APPROVED ||
-      approval === ApprovalState.PENDING ||
-      (approvalSubmitted && approval === ApprovalState.APPROVED))
 
 
   // This will check to see if the user has selected Syrup to either buy or sell.
@@ -375,38 +348,7 @@ const Deposit = () => {
 
             </AutoColumn>
             <BottomGrouping>
-              {!account ? (
-                <ConnectWalletButton width="100%" />
-              ) : // <Button disabled={Boolean(wrapInputError)}>Hello</Button>
-              showWrap ? (
-                <Button disabled={Boolean(wrapInputError)} onClick={onWrap} width="100%">
-                  {wrapInputError ??
-                    (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
-                </Button>
-              ) : noRoute && userHasSpecifiedInputOutput ? (
-                <GreyCard style={{ textAlign: 'center' }}>
-                  <Text mb="4px">{TranslateString(1194, 'Insufficient liquidity for this trade.')}</Text>
-                </GreyCard>
-              ) : showApproveFlow ? (
-                <Button
-                  onClick={approveCallback}
-                  disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
-                  style={{ width: '100%' }}
-                  variant={approval === ApprovalState.APPROVED ? 'success' : 'primary'}
-                >
-                  {approval === ApprovalState.PENDING ? (
-                    <AutoRow gap="6px" justify="center">
-                      Approving <Loader stroke="white" />
-                    </AutoRow>
-                  ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
-                    'Approved'
-                  ) : (
-                    `Approve ${UNDERLYING_NAME}`
-                  )}
-                </Button>
-              ) : (
-                null
-              )}
+
               <br/>
               <br/>
               <div>
