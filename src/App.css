@@ -1,0 +1,29 @@
+.button-menu {
+  margin-left: 20%;
+  margin-top: 5%;
+}
+
+.button-exit {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.button-div {
+  padding-top: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.select-deposit {
+  position: relative;
+  padding-top: 15px;
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+}
+
+.select:focus {
+  max-width: 100px;
+  width: auto;
+}

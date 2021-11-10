@@ -1,1 +1,7 @@
-# new-bCOT-STAKE-UI-WITHOUT-LD
+# Fetch-UI
+
+# RUN
+```
+1) yarn
+2) yarn start
+```
