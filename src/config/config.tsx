@@ -1,3 +1,3 @@
-const pair = '0xE81e92Bf8A02da1937B932d06ea6d1C6E35b7C01'
+const pair = '0xA4803d30856d446a1E34938dB8b163E60E5a3e01'
 
 export default pair

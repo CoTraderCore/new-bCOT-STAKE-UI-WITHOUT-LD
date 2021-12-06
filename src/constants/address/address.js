@@ -1,14 +1,25 @@
-// MAINNET
+// MAINNET 
 
-export const AddressDepositor='0xe4610e05f8B742e9Ab1043149EF783371a587b04'          // Fetch
-export const ClaimableAddress='0x4b2D428b8F8bB2426C74caf612c1841A63907D0b'          // Stake
-export const DEXFormulaAddress='0x0518AeADb347a73a0200D2C3009e573D2417fd8A'         // Dex formula with pancake Router
+export const AddressDepositor='0xb06CB0e2e11A104Bf357c95e921Da2eB6D097413'          // Fetch
+export const ClaimableAddress='0xFd032c9505038130fF49B5cF9cE1903843BDD1f7'          // Stake
+export const DEXFormulaAddress='0x2527b12BEa4c34180054e651722e764aDdf0c185'         // Dex formula with pancake Router
 export const RouterAddress='0x10ED43C718714eb63d5aA57B78B54704E256024E'             // Pancake Roter
-export const UNDERLYING_TOKEN ='0x29072A31eeB3Fe6A3088C44f1443f2a5b19daE2A'         // bCOT
+export const UNDERLYING_TOKEN ='0x90450798ace5dEfe796e9ff91CF7f9da8822b8A9'         // bCOT
 export const BUSDAddress='0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3'               // BUSD address
-export const UNDERLYING_Pool='0x044473d9a2659d074d363c22f4A57840Cf3d3436'           // Pancake bCOT/WETH pool
+export const UNDERLYING_Pool='0xA4803d30856d446a1E34938dB8b163E60E5a3e01'           // Pancake bCOT/WETH pool
+
 
 // // OLD MAINNET
+//
+// export const AddressDepositor='0xe4610e05f8B742e9Ab1043149EF783371a587b04'          // Fetch
+// export const ClaimableAddress='0x4b2D428b8F8bB2426C74caf612c1841A63907D0b'          // Stake
+// export const DEXFormulaAddress='0x0518AeADb347a73a0200D2C3009e573D2417fd8A'         // Dex formula with pancake Router
+// export const RouterAddress='0x10ED43C718714eb63d5aA57B78B54704E256024E'             // Pancake Roter
+// export const UNDERLYING_TOKEN ='0x29072A31eeB3Fe6A3088C44f1443f2a5b19daE2A'         // bCOT
+// export const BUSDAddress='0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3'               // BUSD address
+// export const UNDERLYING_Pool='0x044473d9a2659d074d363c22f4A57840Cf3d3436'           // Pancake bCOT/WETH pool
+
+// // OLDER MAINNET
 
 // export const AddressDepositor='0x6CeB3e93774f969a69fe13FD86389cBEF5403dc6'          // Fetch
 // export const ClaimableAddress='0x1362984414A8B6985B6bbeaB03342A6fFF4de841'          // Stake
