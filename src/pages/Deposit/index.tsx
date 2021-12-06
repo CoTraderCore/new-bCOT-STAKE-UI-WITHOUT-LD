@@ -169,9 +169,9 @@ const Deposit = () => {
         const addressTemp = await Router.WETH()
 
         // get COT to BNB
-        const _CotToBnb = await Router.getAmountsOut("1000000000000000000",[UNDERLYING_TOKEN, addressTemp])
+        const _CotToBnb = await Router.getAmountsOut("1000000000",[UNDERLYING_TOKEN, addressTemp])
         // get COT to USD
-        const _CotToUsd = await Router.getAmountsOut("1000000000000000000",[UNDERLYING_TOKEN, addressTemp, BUSDAddress])
+        const _CotToUsd = await Router.getAmountsOut("1000000000",[UNDERLYING_TOKEN, addressTemp, BUSDAddress])
 
         // set ratios
         setCotToBnb(web3.utils.fromWei(String(_CotToBnb[1])))
